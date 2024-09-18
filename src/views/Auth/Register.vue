@@ -1,44 +1,62 @@
 <template>
-  <div class="mt-80">
-    <h1>Register</h1>
-    <form @submit.prevent="registerUser">
-      <input type="text" v-model="name" placeholder="Name" required />
-      <input type="email" v-model="email" placeholder="Email" required />
-      <input type="password" v-model="password" placeholder="Password" required />
-      <input type="password" v-model="password_confirmation" placeholder="Confirm Password" required />
+  <div class="auth-container mt-60">
+    <h2>Register</h2>
+    <form @submit.prevent="register">
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" v-model="name" required />
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" v-model="email" required />
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" v-model="password" required />
+      </div>
+      <div>
+        <label for="password_confirmation">Confirm Password:</label>
+        <input type="password" v-model="passwordConfirmation" required />
+      </div>
       <button type="submit">Register</button>
     </form>
   </div>
 </template>
 
 <script>
-import api from '../../api/axios';  // Assurez-vous que ce fichier existe
+import api from '@/api/axios';
+
 
 export default {
-  name: 'UserRegister',
+   name: 'UserRegister',
   data() {
+     
     return {
       name: '',
       email: '',
       password: '',
-      password_confirmation: ''
+      passwordConfirmation: '',
     };
   },
   methods: {
-    async registerUser() {
+    async register() {
       try {
-        // Utilisez api pour effectuer l'inscription
-        await api.post('/register', {
+        const response = await api.post('/register', {
           name: this.name,
           email: this.email,
           password: this.password,
-          password_confirmation: this.password_confirmation
+          password_confirmation: this.passwordConfirmation,
         });
+        localStorage.setItem('token', response.data.token);
         this.$router.push('/login');
       } catch (error) {
-        console.error('Registration failed', error.response.data);
+        console.error('Error during registration:', error.response.data.errors);
       }
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style scoped>
+/* Ajoutez des styles selon vos besoins */
+</style>

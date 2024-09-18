@@ -89,6 +89,7 @@
 
 <script>
 export default {
+  name : 'AppFooter',
   data() {
     return {
       currentYear: new Date().getFullYear(),

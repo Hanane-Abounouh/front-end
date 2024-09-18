@@ -1,9 +1,9 @@
 <template>
-  <div class="dashboard-layout">
-    <Header />
-    <div class="dashboard-body">
-      <Aside />
-      <main class="pl-64 mt-24">
+  <div class="flex flex-col h-screen">
+    <Header @toggle-sidebar="toggleSidebar" />
+    <div class="flex flex-1">
+      <Aside  />
+      <main class="flex-1 ml-0 md:ml-80 mt-24 bg-white border border-gray-100 py-6 px-4 md:px-10">
         <router-view />
       </main>
     </div>
@@ -21,15 +21,20 @@ export default {
     Header,
     Aside,
     // Footer
+  },
+  data() {
+    return {
+      isSidebarOpen: false, // Initial state of the sidebar
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen; // Toggle sidebar visibility
+    }
   }
 };
 </script>
 
 <style scoped>
-.dashboard-body {
-  display: flex;
-}
-main {
-  flex-grow: 1;
-}
+/* Ajoutez des styles supplémentaires si nécessaire */
 </style>
