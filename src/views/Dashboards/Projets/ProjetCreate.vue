@@ -1,5 +1,6 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+    
     <div class="bg-white px-6 py-6 border border-gray-100 rounded-lg shadow-md w-full max-w-xl">
       <h3 class="text-xl font-bold text-[#2a2185] mb-6">Ajouter un Projet</h3>
       <form @submit.prevent="createProjet">
@@ -101,7 +102,7 @@ export default {
   methods: {
     async createProjet() {
       try {
-        await axios.post('http://localhost:8000/api/projets', this.projet);
+        await axios.post('/projets', this.projet);
         this.$emit('created'); // Émet un événement pour signaler que le projet a été créé
         this.handleCancel(); // Ferme le modal en redirigeant
       } catch (error) {

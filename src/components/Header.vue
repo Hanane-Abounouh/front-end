@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed md:pl-80 md:px-12  w-full flex justify-between items-center shadow-md h-16 bg-white text-gray-800 z-40 py-4 px-6">
+  <header class="fixed md:pl-80 md:px-12 w-full flex justify-between items-center shadow-md h-16 bg-white text-gray-800 z-40 py-4 px-6">
     <!-- Sidebar Toggle Button -->
     <button @click="toggleSidebar" class="md:hidden p-2 text-gray-600">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +36,6 @@
           <svg class="w-5 h-5 text-gray-600" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
           </svg>
-          <!-- Notification Badge -->
           <span class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full"></span>
         </button>
         <div v-if="isNotificationsMenuOpen" class="absolute right-0 w-56 p-2 mt-2 space-y-2 bg-white border border-gray-100 rounded-md shadow-md">
@@ -62,17 +61,13 @@
           <span class="hidden md:inline-block ml-2 text-gray-700">{{ user.name }}</span>
         </button>
         <div v-if="isProfileMenuOpen" class="absolute right-0 w-56 p-2 mt-2 space-y-2 bg-white border border-gray-100 rounded-md shadow-md">
-          <a class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100" href="#">
-            Dashboard
-          </a>
+          
           <a class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100" href="#">
             Profile
           </a>
-          <form method="POST" action="/logout">
-            <button type="submit" class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 w-full text-left">
-              Logout
-            </button>
-          </form>
+          <button @click="logout" class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 w-full text-left">
+            Logout
+          </button>
         </div>
       </li>
     </ul>
@@ -80,7 +75,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from '@/api/axios'; 
 
 export default {
   name: 'HeaderApp',
@@ -97,13 +92,35 @@ export default {
   },
   methods: {
     async fetchUser() {
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
       try {
-        const response = await axios.get('/api/user'); // Assurez-vous que l'URL correspond à votre endpoint API utilisateur
-        this.user = response.data;
+        const response = await axios.get('/users', {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Use the retrieved token
+          },
+        });
+        console.log('User Data:', response.data);
+        this.user = response.data; // Assign the retrieved user data directly
       } catch (error) {
         console.error('Erreur lors de la récupération des informations utilisateur:', error);
       }
     },
+
+    async logout() {
+      const token = localStorage.getItem('token');
+      try {
+        await axios.post('/logout', {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Use the retrieved token
+          },
+        });
+        localStorage.removeItem('token'); // Remove the token from local storage
+        this.$router.push('/login'); // Redirect to login page
+      } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+      }
+    },
+
     toggleNotificationsMenu() {
       this.isNotificationsMenuOpen = !this.isNotificationsMenuOpen;
       this.isProfileMenuOpen = false; // Fermer le menu profil s'il est ouvert

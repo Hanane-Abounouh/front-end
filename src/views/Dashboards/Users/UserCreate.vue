@@ -102,15 +102,19 @@ export default {
         console.error('Erreur lors de la récupération des rôles:', error);
       }
     },
-    async createUser() {
-      try {
-        await api.post('/users', this.user);
-        this.$emit('created');
-        this.$emit('close');
-      } catch (error) {
-        console.error('Erreur lors de la création de l’utilisateur:', error);
-      }
-    },
+   async createUser() {
+  try {
+    console.log("Creating user:", this.user); // Vérifie les données
+    await api.post('/users', this.user);
+    this.$emit('created');
+    this.$emit('close');
+    this.user = { name: '', email: '', password: '', role_id: null }; // Réinitialiser le formulaire
+  } catch (error) {
+    console.error('Erreur lors de la création de l’utilisateur:', error);
+    alert('Une erreur est survenue lors de la création de l’utilisateur.'); // Message d'erreur
+  }
+},
+
   },
 };
 </script>

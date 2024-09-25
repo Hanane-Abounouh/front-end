@@ -1,12 +1,13 @@
 <template>
   <div class="w-full overflow-hidden rounded-lg shadow-xs p-4">
-       <div class="flex justify-between gap-4 items-center mb-4">
-      <h2 class="text-lg md:text-2xl  text-[#2a2185] font-bold">Liste des Rôles</h2>
-       <button @click="showCreateForm = true" 
-      class="mt-4 md:mt-0 px-2 py-1 md:py-2 text-gray-700 border border-gray-50 rounded bg-[#dbdbf1] flex items-center space-x-2">
-      <i class="fas fa-plus"></i>
-     <span class="hidden md:inline">Ajouter un Rôle</span> <span class="md:hidden">Ajouter</span>
-    </button>
+    <div class="flex justify-between gap-4 items-center mb-4">
+      <h2 class="text-lg md:text-2xl text-[#2a2185] font-bold">Liste des Rôles</h2>
+      <button @click="showCreateForm = true" 
+        class="mt-4 md:mt-0 px-2 py-1 md:py-2 text-gray-700 border border-gray-50 rounded bg-[#dbdbf1] flex items-center space-x-2">
+        <i class="fas fa-plus"></i>
+        <span class="hidden md:inline">Ajouter un Rôle</span>
+        <span class="md:hidden">Ajouter</span>
+      </button>
     </div>
     <!-- Tableau -->
     <div class="w-full overflow-x-auto mt-14">
@@ -33,7 +34,7 @@
                   </svg>
                 </button>
                 <!-- Bouton Supprimer -->
-                <button @click="deleteRole(role.id)" class="p-2 rounded hover:bg-gray-200">
+                <button @click="confirmDelete(role.id)" class="p-2 rounded hover:bg-gray-200">
                   <svg class="w-5 h-5 text-red-600" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                   </svg>
@@ -44,6 +45,19 @@
         </tbody>
       </table>
     </div>
+    
+    <!-- Confirmation de Suppression -->
+    <div v-if="confirmDeleteId" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h3 class="text-lg font-bold mb-4">Confirmation</h3>
+        <p>Êtes-vous sûr de vouloir supprimer ce rôle ?</p>
+        <div class="flex justify-end mt-4">
+          <button @click="deleteRole(confirmDeleteId)" class="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700">Confirmer</button>
+          <button @click="confirmDeleteId = null" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Annuler</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Formulaires de création et d'édition -->
     <RoleCreate 
       v-if="showCreateForm" 
@@ -74,7 +88,8 @@ export default {
     return {
       roles: [],
       showCreateForm: false,
-      editRoleId: null
+      editRoleId: null,
+      confirmDeleteId: null // Pour stocker l'ID du rôle à supprimer
     };
   },
   async created() {
@@ -92,10 +107,14 @@ export default {
     editRole(roleId) {
       this.editRoleId = roleId;
     },
+    confirmDelete(roleId) {
+      this.confirmDeleteId = roleId; // Ouvre la boîte de dialogue de confirmation
+    },
     async deleteRole(roleId) {
       try {
         await api.delete(`/roles/${roleId}`);
         this.fetchRoles();
+        this.confirmDeleteId = null; // Ferme la boîte de dialogue après suppression
       } catch (error) {
         console.error('Erreur lors de la suppression du rôle:', error);
       }

@@ -11,8 +11,9 @@ import RoleList from '../views/Dashboards/Roles/RoleList.vue';
 import ProjetList from '../views/Dashboards/Projets/ProjetList.vue';
 import ProjetCreate from '../views/Dashboards/Projets/ProjetCreate.vue';
 import MesProjet from '../views/Dashboards/Projets/MesProjet.vue';
-
-
+import TâcheList from '../views/Dashboards/tâches/TâcheList.vue';
+import TacheBoard from '../views/Dashboards/tâches/TacheBoard.vue';
+import TacheDetail from '../views/Dashboards/tâches/TacheDetail.vue';
 
 const routes = [
   {
@@ -36,6 +37,13 @@ const routes = [
       { path: 'projets', name: 'ProjetList', component: ProjetList },
       { path: 'ProjetCreate', name: 'ProjetCreate', component: ProjetCreate },
       { path: 'MesProjet', name: 'MesProjet', component: MesProjet },
+      { path: 'Taches', name: 'TâcheList', component: TâcheList },
+      { path: '/projects/:projectId/tasks', name: 'TacheBoard', component: TacheBoard },
+      {
+        path: '/taches/:tacheId',name: 'TacheDetail', component: TacheDetail,
+      },
+
+
 
 
 

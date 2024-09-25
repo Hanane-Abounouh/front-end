@@ -3,66 +3,72 @@
     <button @click="toggleSidebar" class="absolute top-4 right-4 md:hidden p-2 text-white">
       <i class="fas fa-times"></i>
     </button>
-    <h1 class="px-6 py-8 text-2xl font-bold text-white text-center border-b border-[#3a3387] mb-6">Gestion de Projet</h1>
+    <h1 class="px-6 py-8 text-2xl font-bold text-white text-center border-b border-[#4f47a6] mb-6">Gestion de Projet</h1>
     
     <div class="text-white">
       <ul class="mt-6 space-y-2">
         <li class="relative px-6 py-3">
           <router-link
             to="/dashboard"
-            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 text-white outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
-            active-class="bg-white text-[#2a2185]"
-            exact-active-class="bg-white text-[#2a2185]"
+            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
+            :class="{ 'text-white': $route.path !== '/dashboard', 'bg-white text-[#2a2185] font-semibold': $route.path === '/dashboard' }"
           >
-            <i class="fas fa-home"></i> <!-- Changer ici pour l'icône Dashboard -->
+            <i class="fas fa-home"></i>
             <span class="ml-4">Dashboard</span>
           </router-link>
         </li>
         <li class="relative px-6 py-3">
           <router-link
             to="/dashboard/projets"
-            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 text-white outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
-            active-class="bg-white text-[#2a2185]"
-            exact-active-class="bg-white text-[#2a2185]"
+            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
+            :class="{ 'text-white': $route.path !== '/dashboard/projets', 'bg-white text-[#2a2185] font-semibold': $route.path === '/dashboard/projets' }"
           >
-            <i class="fas fa-box"></i> <!-- Changer ici pour l'icône G-Projets -->
+            <i class="fas fa-box"></i>
             <span class="ml-4">G-Projets</span>
           </router-link>
         </li>
         <li class="relative px-6 py-3">
           <router-link
             to="/dashboard/MesProjet"
-            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 text-white outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
-            active-class="bg-white text-[#2a2185]"
-            exact-active-class="bg-white text-[#2a2185]"
+            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
+            :class="{ 'text-white': $route.path !== '/dashboard/MesProjet', 'bg-white text-[#2a2185] font-semibold': $route.path === '/dashboard/MesProjet' }"
           >
-            <i class="fas fa-tasks"></i> <!-- Changer ici pour l'icône Mes Projets -->
+            <i class="fas fa-tasks"></i>
             <span class="ml-4">Mes Projets</span>
           </router-link>
         </li>
         <li class="relative px-6 py-3">
           <router-link
+            to="/dashboard/Taches"
+            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
+            :class="{ 'text-white': $route.path !== '/dashboard/Taches', 'bg-white text-[#2a2185] font-semibold': $route.path === '/dashboard/Taches' }"
+          >
+            <i class="fas fa-tasks"></i>
+            <span class="ml-4">G-Tâches</span>
+          </router-link>
+        </li>
+        <!-- v-if="isAdmin" -->
+        <li  class="relative px-6 py-3">
+          <router-link
             to="/dashboard/users"
-            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 text-white outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
-            active-class="bg-white text-[#2a2185]"
-            exact-active-class="bg-white text-[#2a2185]"
+            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
+            :class="{ 'text-white': $route.path !== '/dashboard/users', 'bg-white text-[#2a2185] font-semibold': $route.path === '/dashboard/users' }"
           >
             <i class="fas fa-users"></i>
             <span class="ml-4">G-Users</span>
           </router-link>
         </li>
-        <li class="relative px-6 py-3">
+        <!-- v-if="isAdmin" -->
+        <li  class="relative px-6 py-3">
           <router-link
             to="/dashboard/roles"
-            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 text-white outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
-            active-class="bg-white text-[#2a2185]"
-            exact-active-class="bg-white text-[#2a2185]"
+            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
+            :class="{ 'text-white': $route.path !== '/dashboard/roles', 'bg-white text-[#2a2185] font-semibold': $route.path === '/dashboard/roles' }"
           >
             <i class="fas fa-user-shield"></i>
             <span class="ml-4">G-Roles</span>
           </router-link>
         </li>
-        <!-- Ajoutez ici d'autres éléments de menu -->
       </ul>
     </div>
   </aside>
@@ -86,7 +92,7 @@ export default {
     async checkIfAdmin() {
       try {
         const response = await axios.get('/api/users');
-        this.isAdmin = response.data.role.id === 1;
+        this.isAdmin = response.data.role.id === 1; // Vérifie si l'utilisateur est un admin
       } catch (error) {
         console.error('Erreur lors de la vérification du rôle:', error);
       }

@@ -91,7 +91,7 @@ export default {
   methods: {
     async fetchUser() {
       try {
-        const response = await axios.get(`http://localhost:8000/api/users/${this.userId}`);
+        const response = await axios.get(`/users/${this.userId}`);
         this.user = response.data;
       } catch (error) {
         console.error('Erreur lors de la récupération de l’utilisateur:', error);
@@ -99,7 +99,7 @@ export default {
     },
     async fetchRoles() {
       try {
-        const response = await axios.get('http://localhost:8000/api/roles');
+        const response = await axios.get('/roles');
         this.roles = response.data;
       } catch (error) {
         console.error('Erreur lors de la récupération des rôles:', error);
@@ -107,7 +107,7 @@ export default {
     },
     async updateUser() {
       try {
-        await axios.put(`http://localhost:8000/api/users/${this.userId}`, this.user);
+        await axios.put(`/users/${this.userId}`, this.user);
         this.$emit('userUpdated');
         this.$emit('close');
       } catch (error) {
