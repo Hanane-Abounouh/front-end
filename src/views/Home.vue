@@ -37,65 +37,66 @@
       </div>
     </div>
 
-    <!-- Section des services -->
-    <section class="h-full max-h-screen mx-auto pt-12 p-4 mt-20">
-      <div class="w-full px-4">
-        <div class="text-center mx-auto mb-12 lg:mb-20 max-w-[510px]">
-          <span class="font-semibold text-lg text-primary mb-2 block">
-            Nos Services
-          </span>
-          <h2 class="font-bold text-3xl sm:text-4xl md:text-[40px] text-dark mb-4">
-            Ce que Proxime offre
-          </h2>
-          <p class="text-base text-body-color">
-            Proxime est conçu pour améliorer la coordination et la communication entre les membres d’une équipe.
-          </p>
-        </div>
+  <!-- Section des services -->
+<section class="h-full max-h-screen mx-auto pt-12 p-4 mt-20 mb-12"> <!-- Ajout de mb-12 ici -->
+  <div class="w-full px-4">
+    <div class="text-center mx-auto mb-12 lg:mb-20 max-w-[510px]">
+      <span class="font-semibold text-lg text-primary mb-2 block">
+        Nos Services
+      </span>
+      <h2 class="font-bold text-3xl sm:text-4xl md:text-[40px] text-dark mb-4">
+        Ce que Proxime offre
+      </h2>
+      <p class="text-base text-body-color">
+        Proxime est conçu pour améliorer la coordination et la communication entre les membres d’une équipe.
+      </p>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mx-auto max-w-6xl">
+    <!-- Service 1 -->
+    <div class="rounded-xl bg-white p-6 text-center border border-gray-200 shadow-xl transition-transform duration-300 hover:scale-105 mb-6">
+      <div class="mx-auto flex h-16 w-16 -translate-y-12 transform items-center justify-center rounded-full bg-teal-400 shadow-lg shadow-teal-500/40">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-10 w-10 text-white" viewBox="0 0 20 20">
+          <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V7h2v2z" />
+        </svg>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 md:gap-5 mx-auto max-w-6xl">
-        <!-- Service 1 -->
-        <div class="rounded-xl bg-white p-6 text-center border border-gray-200 shadow-xl transition-transform duration-300 hover:scale-105">
-          <div class="mx-auto flex h-16 w-16 -translate-y-12 transform items-center justify-center rounded-full bg-teal-400 shadow-lg shadow-teal-500/40">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-10 w-10 text-white" viewBox="0 0 20 20">
-              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V7h2v2z" />
-            </svg>
-          </div>
-          <h3 class="text-darken mb-3 text-xl font-medium lg:px-14">Gestion de Projets</h3>
-          <p class="px-4 text-gray-500">Organisez vos projets de manière efficace avec des dates, des descriptions, et un suivi en temps réel.</p>
-        </div>
+      <h3 class="text-darken mb-3 text-xl font-medium lg:px-14">Gestion de Projets</h3>
+      <p class="px-4 text-gray-500">Organisez vos projets de manière efficace avec des dates, des descriptions, et un suivi en temps réel.</p>
+    </div>
 
-        <!-- Service 2 -->
-        <div class="rounded-xl bg-white p-6 border border-gray-200 text-center shadow-xl transition-transform duration-300 hover:scale-105">
-          <div class="mx-auto flex h-16 w-16 -translate-y-12 transform items-center justify-center rounded-full bg-rose-500 shadow-rose-500/40">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-10 w-10 text-white" viewBox="0 0 20 20">
-              <path d="M4 4h12v2H4zM4 9h12v2H4zM4 14h12v2H4z" />
-            </svg>
-          </div>
-          <h3 class="text-darken mb-3 text-xl font-medium lg:px-14">Gestion des Tâches</h3>
-          <p class="px-4 text-gray-500">Assignez des tâches, définissez des priorités et suivez le statut des tâches en temps réel.</p>
-        </div>
-
-        <!-- Service 3 -->
-        <div class="rounded-xl bg-white p-6 border border-gray-200 text-center shadow-xl transition-transform duration-300 hover:scale-105">
-          <div class="mx-auto flex h-16 w-16 -translate-y-12 transform items-center justify-center rounded-full bg-blue-500 shadow-blue-500/40">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-10 w-10 text-white" viewBox="0 0 20 20">
-              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V7h2v2z" />
-            </svg>
-          </div>
-          <h3 class="text-darken mb-3 text-xl font-medium lg:px-14">Partage de Fichiers</h3>
-          <p class="px-4 text-gray-500">Téléversez et partagez des fichiers facilement, tout en collaborant avec votre équipe.</p>
-        </div>
+    <!-- Service 2 -->
+    <div class="rounded-xl bg-white p-6 border border-gray-200 text-center shadow-xl transition-transform duration-300 hover:scale-105 mb-6">
+      <div class="mx-auto flex h-16 w-16 -translate-y-12 transform items-center justify-center rounded-full bg-rose-500 shadow-rose-500/40">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-10 w-10 text-white" viewBox="0 0 20 20">
+          <path d="M4 4h12v2H4zM4 9h12v2H4zM4 14h12v2H4z" />
+        </svg>
       </div>
-    </section>
+      <h3 class="text-darken mb-3 text-xl font-medium lg:px-14">Gestion des Tâches</h3>
+      <p class="px-4 text-gray-500">Assignez des tâches, définissez des priorités et suivez le statut des tâches en temps réel.</p>
+    </div>
 
-    <!-- Section à propos -->
-    <section class="bg-gray-100 py-40">
-      <div class="container mx-auto px-6 text-center">
-        <h2 class="text-3xl font-semibold text-gray-800">À propos de Proxime</h2>
-        <p class="mt-4 text-gray-600">Proxime est une plateforme conçue pour vous aider à organiser vos projets de manière simple, efficace et collaborative. Notre mission est de simplifier la gestion de vos tâches et de vous permettre de vous concentrer sur ce qui compte vraiment : l'accomplissement de vos objectifs.</p>
-        <a href="#" class="mt-8 inline-block bg-[#2a2185] text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition ease-in-out duration-300 transform hover:scale-105">En savoir plus</a>
+    <!-- Service 3 -->
+    <div class="rounded-xl bg-white p-6 border border-gray-200 text-center shadow-xl transition-transform duration-300 hover:scale-105 mb-6">
+      <div class="mx-auto flex h-16 w-16 -translate-y-12 transform items-center justify-center rounded-full bg-blue-500 shadow-blue-500/40">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-10 w-10 text-white" viewBox="0 0 20 20">
+          <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V7h2v2z" />
+        </svg>
       </div>
-    </section>
+      <h3 class="text-darken mb-3 text-xl font-medium lg:px-14">Partage de Fichiers</h3>
+      <p class="px-4 text-gray-500">Téléversez et partagez des fichiers facilement, tout en collaborant avec votre équipe.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Section à propos -->
+<section class="bg-gray-100 py-40 mt-44 sm:mt-8">
+  <div class="container mx-auto px-6 text-center">
+    <h2 class="text-3xl font-semibold text-gray-800">À propos de Proxime</h2>
+    <p class="mt-4 text-gray-600">Proxime est une plateforme conçue pour vous aider à organiser vos projets de manière simple, efficace et collaborative. Notre mission est de simplifier la gestion de vos tâches et de vous permettre de vous concentrer sur ce qui compte vraiment : l'accomplissement de vos objectifs.</p>
+    <router-link to="/AboutPage" class="mt-8 inline-block bg-[#2a2185] text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition ease-in-out duration-300 transform hover:scale-105">En savoir plus</router-link>
+  </div>
+</section>
+
   </div>
 </template>
 

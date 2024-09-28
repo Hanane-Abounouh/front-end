@@ -92,7 +92,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import ProjetEdit from './ProjetEdit.vue';
 import axios from '@/api/axios';
@@ -113,41 +112,49 @@ export default {
     };
   },
   methods: {
-    async fetchProjects() {
-      try {
-        const projectsResponse = await axios.get('/user/projets');
-        this.allProjects = projectsResponse.data;
-        this.filteredProjects = this.allProjects;
+   async fetchProjects() {
+  try {
+    const userResponse = await axios.get('/users');
+    this.userId = userResponse.data.id;
 
-        const userResponse = await axios.get('/user');
-        this.userId = userResponse.data.id;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des projets ou de l\'ID utilisateur:', error);
-      }
-    },
-    filterProjects() {
-      let filtered = this.allProjects;
+    const projectsResponse = await axios.get('/user/projets');
+    this.allProjects = projectsResponse.data;
 
-      // Appliquer le filtre sélectionné
-      if (this.selectedFilter === 'created') {
-        filtered = filtered.filter(projet => projet.créé_par === this.userId);
-      } else if (this.selectedFilter === 'invited') {
-        filtered = filtered.filter(projet => projet.role_id === 3 && projet.utilisateur_id === this.userId);
-      }
+    // Log la structure des projets
+    console.log(this.allProjects); // Ajoutez cette ligne pour vérifier la structure
+    this.filteredProjects = this.allProjects;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des projets ou de l\'ID utilisateur:', error);
+  }
+},
 
-      // Appliquer la recherche par nom
-      if (this.searchTerm) {
-        filtered = filtered.filter(projet =>
-          projet.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-        );
-      }
+filterProjects() {
+  let filtered = this.allProjects;
 
-      this.filteredProjects = filtered;
-    },
+  // Appliquer le filtre sélectionné
+  if (this.selectedFilter === 'created') {
+    filtered = filtered.filter(projet => projet.créé_par === this.userId);
+  } else if (this.selectedFilter === 'invited') {
+    filtered = filtered.filter(projet => 
+      projet.utilisateurs?.some(user => user.utilisateur_id === this.userId && user.role_id === 3) // Utilisez l'opérateur ?. pour éviter l'erreur
+    );
+  }
+
+  // Appliquer la recherche par nom
+  if (this.searchTerm) {
+    filtered = filtered.filter(projet =>
+      projet.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
+  this.filteredProjects = filtered;
+},
+
 
     goToTasks(projetId) {
       this.$router.push({ name: 'TacheBoard', params: { projectId: projetId } });
     },
+
     editProject(projetId) {
       this.editProjetId = projetId;
     },
@@ -171,6 +178,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 /* Styles pour le modal */

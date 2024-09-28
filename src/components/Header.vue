@@ -65,7 +65,7 @@
           <a class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100" href="#">
             Profile
           </a>
-          <button @click="logout" class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 w-full text-left">
+          <button @click="confirmLogout" class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 w-full text-left">
             Logout
           </button>
         </div>
@@ -92,17 +92,23 @@ export default {
   },
   methods: {
     async fetchUser() {
-      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const token = localStorage.getItem('token');
       try {
         const response = await axios.get('/users', {
           headers: {
-            'Authorization': `Bearer ${token}`, // Use the retrieved token
+            'Authorization': `Bearer ${token}`,
           },
         });
-        console.log('User Data:', response.data);
-        this.user = response.data; // Assign the retrieved user data directly
+        this.user = response.data;
       } catch (error) {
         console.error('Erreur lors de la récupération des informations utilisateur:', error);
+      }
+    },
+
+    async confirmLogout() {
+      const confirmLogout = confirm("Êtes-vous sûr de vouloir vous déconnecter ?");
+      if (confirmLogout) {
+        this.logout(); // Proceed to logout if confirmed
       }
     },
 
@@ -111,11 +117,11 @@ export default {
       try {
         await axios.post('/logout', {}, {
           headers: {
-            'Authorization': `Bearer ${token}`, // Use the retrieved token
+            'Authorization': `Bearer ${token}`,
           },
         });
-        localStorage.removeItem('token'); // Remove the token from local storage
-        this.$router.push('/login'); // Redirect to login page
+        localStorage.removeItem('token');
+        this.$router.push('/login');
       } catch (error) {
         console.error('Erreur lors de la déconnexion:', error);
       }
@@ -123,18 +129,18 @@ export default {
 
     toggleNotificationsMenu() {
       this.isNotificationsMenuOpen = !this.isNotificationsMenuOpen;
-      this.isProfileMenuOpen = false; // Fermer le menu profil s'il est ouvert
+      this.isProfileMenuOpen = false;
     },
     toggleProfileMenu() {
       this.isProfileMenuOpen = !this.isProfileMenuOpen;
-      this.isNotificationsMenuOpen = false; // Fermer le menu notifications s'il est ouvert
+      this.isNotificationsMenuOpen = false;
     },
     toggleSidebar() {
-      this.$emit('toggle-sidebar'); // Émettre un événement pour ouvrir/fermer la barre latérale
+      this.$emit('toggle-sidebar');
     }
   },
   created() {
-    this.fetchUser(); // Récupérer les données utilisateur lors de la création du composant
+    this.fetchUser();
   }
 };
 </script>

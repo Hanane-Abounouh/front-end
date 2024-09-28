@@ -58,6 +58,16 @@
             <span class="ml-4">G-Users</span>
           </router-link>
         </li>
+         <li  class="relative px-6 py-3">
+          <router-link
+            to="/dashboard/Commentaires"
+            class="flex h-12 items-center truncate rounded-t-3xl rounded-b-3xl px-6 py-4 outline-none transition duration-300 ease-linear hover:bg-white hover:text-[#2a2185]"
+            :class="{ 'text-white': $route.path !== '/dashboard/Commentaires', 'bg-white text-[#2a2185] font-semibold': $route.path === '/dashboard/Commentaires' }"
+          >
+            <i class="fas fa-users"></i>
+            <span class="ml-4">G-Commentaires</span>
+          </router-link>
+        </li>
         <!-- v-if="isAdmin" -->
         <li  class="relative px-6 py-3">
           <router-link

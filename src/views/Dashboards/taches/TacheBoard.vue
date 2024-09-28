@@ -21,9 +21,9 @@
           <li
             v-for="tâche in tâches"
             :key="tâche.id"
-            :class="[
+            :class="[ 
               'bg-white border border-gray-200 rounded-lg shadow p-2 mb-4 relative group hover:bg-gray-100',
-              { 'border-red-400': tâche.priorité === 'élevée' }, // Ajout de la classe conditionnelle
+              { 'border-red-400': tâche.priorite === 'elevee' },
             ]"
           >
             <div
@@ -113,7 +113,7 @@
       </div>
     </div>
 
-   <TacheDetail v-if="selectedTâche" :tâche="selectedTâche" :projetId="projetId" @close="closeDetail" @tâcheUpdated="fetchTâches" />
+    <TacheDetail v-if="selectedTâche" :tâche="selectedTâche" :projetId="projetId" @close="closeDetail" @tâcheUpdated="fetchTasks" />
   </div>
 </template>
 
@@ -135,31 +135,31 @@ export default {
       formVisibleSection: null,
       selectedTâche: null,
       sectionClasses: {
-        Backlog: "border-b-2 border-gray-500 bg-gray-200 rounded p-2",
-        "À faire": "border-b-2 border-blue-500 bg-blue-200 rounded p-2",
-        "En cours": "border-b-2 border-yellow-500 bg-yellow-200 rounded p-2",
-        Terminé: "border-b-2 border-green-500 bg-green-200 rounded p-2",
-        Bloqué: "border-b-2 border-red-500 bg-red-200 rounded p-2",
+        backlog: "border-b-2 border-gray-500 bg-gray-200 rounded p-2",
+        "a faire": "border-b-2 border-blue-500 bg-blue-200 rounded p-2",
+        "en cours": "border-b-2 border-yellow-500 bg-yellow-200 rounded p-2",
+        termine: "border-b-2 border-green-500 bg-green-200 rounded p-2",
+        bloque: "border-b-2 border-red-500 bg-red-200 rounded p-2",
       },
     };
   },
   computed: {
     sectionsTâches() {
       return {
-        Backlog: this.toutesLesTâches.filter(
+        backlog: this.toutesLesTâches.filter(
           (tâche) => tâche.statut === "backlog"
         ),
-        "À faire": this.toutesLesTâches.filter(
-          (tâche) => tâche.statut === "à faire"
+        "a faire": this.toutesLesTâches.filter(
+          (tâche) => tâche.statut === "a faire"
         ),
-        "En cours": this.toutesLesTâches.filter(
+        "en cours": this.toutesLesTâches.filter(
           (tâche) => tâche.statut === "en cours"
         ),
-        Terminé: this.toutesLesTâches.filter(
-          (tâche) => tâche.statut === "terminé"
+        termine: this.toutesLesTâches.filter(
+          (tâche) => tâche.statut === "termine"
         ),
-        Bloqué: this.toutesLesTâches.filter(
-          (tâche) => tâche.statut === "bloqué"
+        bloque: this.toutesLesTâches.filter(
+          (tâche) => tâche.statut === "bloque"
         ),
       };
     },
@@ -198,7 +198,7 @@ export default {
         });
 
         const nouvelleTâche = {
-          id: response.data.id,
+          id: response.data.tache.id,
           titre: this.nouvelleTâche,
           statut: statut.toLowerCase(),
           date_limite: "",
