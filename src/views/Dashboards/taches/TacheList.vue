@@ -22,6 +22,7 @@
             <th class="px-4 py-3">Priorité</th>
             <th class="px-4 py-3">Projet ID</th>
             <th class="px-4 py-3">Assigné à</th>
+            <th class="px-4 py-3">Créé par</th>
             <th class="px-4 py-3">Actions</th>
           </tr>
         </thead>
@@ -32,9 +33,10 @@
             <td class="px-4 py-3 text-sm">{{ tâche.description }}</td>
             <td class="px-4 py-3 text-sm">{{ tâche.date_limite }}</td>
             <td class="px-4 py-3 text-sm">{{ tâche.statut }}</td>
-            <td class="px-4 py-3 text-sm">{{ tâche.priorité }}</td>
+            <td class="px-4 py-3 text-sm">{{ tâche.priorite }}</td>
             <td class="px-4 py-3 text-sm">{{ tâche.projet_id }}</td>
-            <td class="px-4 py-3 text-sm">{{ tâche.assigné_a || 'pas assigné' }}</td>
+            <td class="px-4 py-3 text-sm">{{ tâche.assigne_a || 'pas assigné' }}</td>
+            <td class="px-4 py-3 text-sm">{{ tâche.cree_par }}</td>
             <td class="px-4 py-3 text-sm">
               <div class="flex items-center space-x-2">
                 <button @click="openEditForm(tâche)" class="p-2 rounded hover:bg-gray-200">
@@ -42,6 +44,10 @@
                 </button>
                 <button @click="confirmDeleteTâche(tâche.id)" class="p-2 rounded hover:bg-gray-200">
                   <i class="fas fa-trash text-red-600"></i>
+                </button>
+                <!-- Assign button -->
+                <button @click="openAssignForm(tâche)" class="p-2 rounded hover:bg-gray-200">
+                  <i class="fas fa-user-plus text-blue-600"></i>
                 </button>
               </div>
             </td>
@@ -92,6 +98,15 @@
       @close="showEditForm = false" 
       @updated="fetchTâches" 
     />
+
+  <TacheAssign
+  v-if="isAssigning"
+  :tâcheId="assignTâcheId" 
+  :projetId="assignProjetId" 
+  @close="isAssigning = false"
+  @assigned="handleTaskAssigned" 
+/>
+
   </div>
 </template>
 
@@ -99,12 +114,14 @@
 import axios from '@/api/axios';
 import TacheCreate from './TacheCreate.vue';
 import TacheEdit from './TacheEdit.vue';
+import TacheAssign from './TacheAssign.vue';
 
 export default {
   name: 'TacheList',
   components: {
     TacheCreate,
-    TacheEdit
+    TacheEdit,
+    TacheAssign
   },
   data() {
     return {
@@ -113,7 +130,10 @@ export default {
       itemsPerPage: 5,
       showCreateForm: false,
       showEditForm: false,
+      isAssigning: false,
       editTâcheId: null,
+      assignTâcheId: null,
+      assignProjetId: null,
       tâcheToEdit: {}
     };
   },
@@ -130,7 +150,7 @@ export default {
     async fetchTâches() {
       try {
         const response = await axios.get('/taches');
-        this.tâches = response.data;
+        this.tâches = response.data; // Met à jour les tâches
       } catch (error) {
         console.error('Erreur lors de la récupération des tâches:', error);
       }
@@ -153,20 +173,29 @@ export default {
       this.editTâcheId = tâche.id;
       this.showEditForm = true;
     },
+  
+    openAssignForm(tâche) {
+      this.assignTâcheId = tâche.id;
+      this.assignProjetId = tâche.projet_id; // Passer l'ID du projet
+      this.isAssigning = true; // Ouvrir le formulaire d'assignation
+    },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
       }
     },
+  
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
       }
     }
+    
   },
   mounted() {
     this.fetchTâches();
   }
+  
 };
 </script>
 

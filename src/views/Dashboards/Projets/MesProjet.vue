@@ -112,43 +112,51 @@ export default {
     };
   },
   methods: {
-   async fetchProjects() {
-  try {
-    const userResponse = await axios.get('/users');
-    this.userId = userResponse.data.id;
+    async fetchProjects() {
+        try {
+            const userResponse = await axios.get('/user');
+            this.userId = userResponse.data.id;
 
-    const projectsResponse = await axios.get('/user/projets');
-    this.allProjects = projectsResponse.data;
+            const projectsResponse = await axios.get('/user/projets');
+            this.allProjects = projectsResponse.data;
 
-    // Log la structure des projets
-    console.log(this.allProjects); // Ajoutez cette ligne pour vérifier la structure
-    this.filteredProjects = this.allProjects;
-  } catch (error) {
-    console.error('Erreur lors de la récupération des projets ou de l\'ID utilisateur:', error);
-  }
+            // Log la structure des projets
+            console.log(this.allProjects); // Ajoutez cette ligne pour vérifier la structure
+            this.filteredProjects = this.allProjects;
+        } catch (error) {
+            console.error('Erreur lors de la récupération des projets ou de l\'ID utilisateur:', error);
+        }
+    },
+
+
+  filterProjects() {
+    let filtered = this.allProjects;
+
+    // Appliquer le filtre sélectionné
+    if (this.selectedFilter === 'created') {
+        filtered = filtered.filter(projet => projet.créé_par === this.userId);
+    } else if (this.selectedFilter === 'invited') {
+        filtered = filtered.filter(projet => {
+            return projet.utilisateurs.some(user => 
+                user.id === this.userId && user.pivot.role_id === 3
+            );
+        });
+    }
+
+    // Appliquer la recherche par nom
+    if (this.searchTerm) {
+        filtered = filtered.filter(projet =>
+            projet.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        );
+    }
+
+    this.filteredProjects = filtered;
+
+    // Debugging: Loggez les projets filtrés pour vérifier la logique
+    console.log('Projets filtrés:', this.filteredProjects);
 },
 
-filterProjects() {
-  let filtered = this.allProjects;
 
-  // Appliquer le filtre sélectionné
-  if (this.selectedFilter === 'created') {
-    filtered = filtered.filter(projet => projet.créé_par === this.userId);
-  } else if (this.selectedFilter === 'invited') {
-    filtered = filtered.filter(projet => 
-      projet.utilisateurs?.some(user => user.utilisateur_id === this.userId && user.role_id === 3) // Utilisez l'opérateur ?. pour éviter l'erreur
-    );
-  }
-
-  // Appliquer la recherche par nom
-  if (this.searchTerm) {
-    filtered = filtered.filter(projet =>
-      projet.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-  }
-
-  this.filteredProjects = filtered;
-},
 
 
     goToTasks(projetId) {

@@ -17,61 +17,69 @@
           {{ statut }}
         </h2>
 
-        <ul class="flex-grow mt-4 overflow-y-auto">
-          <li
-            v-for="tâche in tâches"
-            :key="tâche.id"
-            :class="[ 
-              'bg-white border border-gray-200 rounded-lg shadow p-2 mb-4 relative group hover:bg-gray-100',
-              { 'border-red-400': tâche.priorite === 'elevee' },
-            ]"
-          >
-            <div
-              v-if="!tâche.editing"
-              class="flex justify-between items-center"
-            >
-              <div class="w-full">
-                <p
-                  @click="openDetail(tâche)"
-                  class="text-[14px] font-semibold flex text-gray-800 cursor-pointer hover:text-blue-600"
-                >
-                  {{ tâche.titre }}
-                </p>
-                <p v-if="tâche.date_limite" class="text-xs text-gray-500 mt-1">
-                  {{ tâche.date_limite }}
-                </p>
-              </div>
+       <ul class="flex-grow mt-4 overflow-y-auto">
+  <li
+    v-for="tâche in tâches"
+    :key="tâche.id"
+    :class="[ 
+      'bg-white border  border-gray-200 rounded-lg shadow p-2 mb-4 relative group hover:bg-gray-100',
+      { 'border-red-400': tâche.priorite === 'elevee' },
+    ]">
+    <div
+      v-if="!tâche.editing"
+      class="flex justify-between  items-center">
+      <div class="w-52 ">
+         <p
+        @click="openDetail(tâche)"
+        class="text-[14px]  font-semibold text-gray-800 cursor-pointer hover:text-blue-600"
+        style="white-space: normal; overflow-wrap: break-word;">
+        {{ tâche.titre }}
+      </p>
+      <div  class="text-xs text-gray-500 mt-1 flex items-center gap-2">
+      <p v-if="tâche.date_limite"> {{ tâche.date_limite }}   </p>
+       <i v-if="tâche.description" class="fas fa-bars text-gray-600" title="Description disponible"></i>
+       
+      </div>
 
-              <i
-                @click.stop="startEditing(tâche)"
-                class="fas fa-pencil-alt text-gray-400 cursor-pointer hover:text-gray-600 hidden group-hover:block"
-              ></i>
-            </div>
+      </div>
 
-            <div v-if="tâche.editing" class="mt-2">
-              <input
-                v-model="tâche.editedTitre"
-                type="text"
-                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                required
-              />
-              <div class="flex space-x-2 mt-2">
-                <button
-                  @click="saveTâche(tâche)"
-                  class="bg-blue-700 text-white p-2 rounded hover:bg-blue-600 transition"
-                >
-                  Enregistrer
-                </button>
-                <button
-                  @click="cancelEditing(tâche)"
-                  class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition"
-                >
-                  Annuler
-                </button>
-              </div>
-            </div>
-          </li>
-        </ul>
+      <i @click.stop="startEditing(tâche)"
+        class="fas fa-pencil-alt text-gray-400 cursor-pointer hover:text-gray-600 hidden group-hover:block"></i>
+      <i v-if="tâche.cree_par === currentUserId"
+      @click.stop="deleteTâche(tâche.id)"
+      class="fas fa-trash-alt text-red-500 cursor-pointer hover:text-red-700 ml-2 hidden group-hover:block"
+      title="Supprimer la tâche"></i>
+
+
+
+
+    </div>
+
+    <div v-if="tâche.editing" class="mt-2">
+      <input
+        v-model="tâche.editedTitre"
+        type="text"
+        class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+        required
+      />
+      <div class="flex space-x-2 mt-2">
+        <button
+          @click="saveTâche(tâche)"
+          class="bg-blue-700 text-white p-2 rounded hover:bg-blue-600 transition"
+        >
+          Enregistrer
+        </button>
+        <button
+          @click="cancelEditing(tâche)"
+          class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition"
+        >
+          Annuler
+        </button>
+      </div>
+    </div>
+  </li>
+</ul>
+
 
         <div
           v-if="!formVisible || formVisibleSection !== statut"
@@ -112,6 +120,17 @@
         </form>
       </div>
     </div>
+    <div v-if="confirmDeleteId" class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg">
+    <h3 class="text-lg font-bold mb-4">Confirmation</h3>
+    <p>Êtes-vous sûr de vouloir supprimer cette tâche ?</p>
+    <div class="flex justify-end mt-4">
+      <button @click="confirmDeleteTâche" class="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700">Confirmer</button>
+      <button @click="confirmDeleteId = null" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Annuler</button>
+    </div>
+  </div>
+</div>
+
 
     <TacheDetail v-if="selectedTâche" :tâche="selectedTâche" :projetId="projetId" @close="closeDetail" @tâcheUpdated="fetchTasks" />
   </div>
@@ -133,6 +152,8 @@ export default {
       nouvelleTâche: "",
       formVisible: false,
       formVisibleSection: null,
+       currentUserId: null,
+      confirmDeleteId: null,
       selectedTâche: null,
       sectionClasses: {
         backlog: "border-b-2 border-gray-500 bg-gray-200 rounded p-2",
@@ -174,6 +195,17 @@ export default {
       }
     },
 
+
+ async fetchCurrentUserId() {
+  try {
+    const response = await axios.get('/user');
+    this.currentUserId = response.data.id;
+    console.log('Current User ID:', this.currentUserId); // Vérifiez la valeur ici
+  } catch (error) {
+    console.error('Erreur lors de la récupération de l\'ID de l\'utilisateur:', error);
+  }
+},
+
     openDetail(tâche) {
       this.selectedTâche = tâche;
     },
@@ -195,6 +227,7 @@ export default {
           titre: this.nouvelleTâche,
           statut: statut.toLowerCase(),
           projet_id: this.projetId,
+          cree_par: this.currentUserId,
         });
 
         const nouvelleTâche = {
@@ -203,6 +236,7 @@ export default {
           statut: statut.toLowerCase(),
           date_limite: "",
           editing: false,
+          cree_par: this.currentUserId,
         };
 
         this.toutesLesTâches.push(nouvelleTâche);
@@ -242,6 +276,20 @@ export default {
         );
       }
     },
+    async deleteTâche(tâcheId) {
+    this.confirmDeleteId = tâcheId; // Mettez à jour cette ligne
+  },
+
+  async confirmDeleteTâche() {
+    try {
+      await axios.delete(`/taches/${this.confirmDeleteId}`);
+      this.toutesLesTâches = this.toutesLesTâches.filter(tâche => tâche.id !== this.confirmDeleteId);
+      this.confirmDeleteId = null; // Réinitialiser après la suppression
+      console.log("Tâche supprimée avec succès.");
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la tâche:", error);
+    }
+  },
 
     cancelEditing(tâche) {
       tâche.editing = false;
@@ -256,6 +304,7 @@ export default {
   mounted() {
     this.projetId = this.$route.params.projectId;
     this.fetchTasks();
+    this.fetchCurrentUserId(); 
   },
 };
 </script>
@@ -264,4 +313,16 @@ export default {
 .group-hover .fa-pencil-alt {
   display: block !important;
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9a9aa2;
+  border-radius: 10px;
+  
+}
+
+
 </style>

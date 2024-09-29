@@ -1,219 +1,163 @@
 <template>
-  <div class="container px-4">
-    <h1 class="text-2xl md:text-3xl font-bold text-gray-700 mb-6">Tableau des Tâches</h1>
-
-    <div class="flex space-x-4">
-      <div
-        v-for="(taches, statut) in sectionsTaches"
-        :key="statut"
-        class="w-1/5 flex flex-col rounded-lg shadow-lg border border-gray-200 p-2 max-h-[70vh]"
-      >
-        <h2
-          :class="sectionClasses[statut]"
-          class="text-xl font-semibold text-gray-800 mb-4 pb-2"
-        >
-          {{ statut }}
-        </h2>
-
-        <ul class="flex-grow mt-4 overflow-y-auto">
-          <li
-            v-for="tache in taches"
-            :key="tache.id"
-            :class="[ 'bg-white border border-gray-200 rounded-lg shadow p-2 mb-4 relative group hover:bg-gray-100', { 'border-red-400': tache.priorite === 'elevee' } ]"
-          >
-            <div v-if="!tache.editing" class="flex justify-between items-center">
-              <div class="w-full">
-                <p
-                  @click="openDetail(tache)"
-                  class="text-[14px] font-semibold flex text-gray-800 cursor-pointer"
-                >
-                  {{ tache.titre }}
-                </p>
-                <p v-if="tache.date_limite" class="text-xs text-gray-500 mt-1">
-                  {{ tache.date_limite }}
-                </p>
-              </div>
-
-              <i
-                @click.stop="startEditing(tache)"
-                class="fas fa-pencil-alt text-gray-400 cursor-pointer hover:text-gray-600 hidden group-hover:block"
-              ></i>
-            </div>
-
-            <div v-if="tache.editing" class="mt-2">
-              <input
-                v-model="tache.editedTitre"
-                type="text"
-                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                required
-              />
-              <div class="flex space-x-2 mt-2">
-                <button
-                  @click="saveTache(tache)"
-                  class="bg-blue-700 text-white p-2 rounded hover:bg-blue-600 transition"
-                >
-                  Enregistrer
-                </button>
-                <button
-                  @click="cancelEditing(tache)"
-                  class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition"
-                >
-                  Annuler
-                </button>
-              </div>
-            </div>
-          </li>
-        </ul>
-
-        <div
-          v-if="!formVisible || formVisibleSection !== statut"
-          @click="toggleForm(statut)"
-          class="mt-4 flex items-center cursor-pointer hover:text-gray-600 transition"
-        >
-          <i class="fas fa-plus-circle text-gray-500 text-xl mr-2"></i>
-          <span class="text-gray-500 font-semibold">Ajouter une tâche</span>
-        </div>
-
-        <form
-          v-if="formVisible && formVisibleSection === statut"
-          @submit.prevent="ajouterTache(statut)"
-          class="mt-4"
-        >
-          <input
-            v-model="nouvelleTache"
-            type="text"
-            placeholder="Nom de la nouvelle tâche"
-            class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600 mb-4"
+  <div class="inset-0 flex mt-10">
+    <div class="bg-white px-6 py-4 border border-gray-100 rounded-lg shadow-md w-full max-w-2xl">
+      <h3 class="text-xl font-bold text-[#2a2185] mb-6">Créer une Tâche</h3>
+      <form @submit.prevent="createTache">
+        <!-- Titre -->
+        <div class="mb-4">
+          <label for="titre" class="block text-sm font-semibold text-gray-700 mb-2">Titre</label>
+          <input 
+            v-model="tâche.titre" 
+            type="text" 
+            id="titre" 
+            class="mt-1 block w-full bg-gray-200 rounded-md shadow-sm"
             required
           />
-          <div class="flex space-x-2">
-            <button
-              type="submit"
-              class="bg-blue-700 text-white p-2 rounded hover:bg-blue-600 transition"
-            >
-              Ajouter
-            </button>
-            <button
-              type="button"
-              @click="annulerAjout"
-              class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition"
-            >
-              Annuler
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
+        
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+          <textarea 
+            v-model="tâche.description" 
+            id="description" 
+            class="mt-1 block w-full bg-gray-200 rounded-md shadow-sm"
+            
+          ></textarea>
+        </div>
+        
+        <!-- Date Limite -->
+        <div class="mb-4">
+          <label for="date_limite" class="block text-sm font-semibold text-gray-700 mb-2">Date Limite</label>
+          <input 
+            v-model="tâche.date_limite" 
+            type="date" 
+            id="date_limite" 
+            class="mt-1 block w-full bg-gray-200 rounded-md shadow-sm"
+            
+          />
+        </div>
 
-    <TacheDetail
-      v-if="selectedTache"
-      :tache="selectedTache"
-      @close="closeDetail"
-      @tacheUpdated="fetchTasks"
-    />
+        <!-- Statut -->
+        <div class="mb-4">
+          <label for="statut" class="block text-sm font-semibold text-gray-700 mb-2">Statut</label>
+          <select 
+            v-model="tâche.statut" 
+            id="statut" 
+            class="mt-1 block w-full bg-gray-200 rounded-md shadow-sm"
+            required
+          >
+            <option value="backlog">Backlog</option>
+            <option value="a faire">À faire</option> <!-- Changed from 'à faire' to 'a faire' -->
+            <option value="en cours">En cours</option>
+            <option value="termine">Terminé</option> <!-- Changed from 'terminé' to 'termine' -->
+            <option value="bloque">Bloqué</option> <!-- Changed from 'bloqué' to 'bloque' -->
+          </select>
+        </div>
+
+        <!-- Priorité -->
+        <div class="mb-4">
+          <label for="priorite" class="block text-sm font-semibold text-gray-700 mb-2">Priorité</label>
+          <select 
+            v-model="tâche.priorite" 
+            id="priorite" 
+            class="mt-1 block w-full bg-gray-200 rounded-md shadow-sm"
+            required
+          >
+            <option value="basse">Faible</option>
+            <option value="moyenne">Moyenne</option>
+            <option value="elevee">Élevée</option> <!-- Changed from 'élevée' to 'elevee' -->
+          </select>
+        </div>
+
+        <!-- Projet ID -->
+        <div class="mb-4">
+          <label for="projet_id" class="block text-sm font-semibold text-gray-700 mb-2">Projet ID</label>
+          <input 
+            v-model="tâche.projet_id" 
+            type="number" 
+            id="projet_id" 
+            class="mt-1 block w-full bg-gray-200 rounded-md shadow-sm"
+            required
+          />
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex justify-end space-x-3">
+          <button 
+            type="button" 
+            class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+            @click="$emit('close')"
+          >
+            Annuler
+          </button>
+          <button 
+            type="submit" 
+            class="px-4 py-2 bg-[#8c94cc] text-white rounded-md hover:bg-[#6e74a7]"
+          >
+            Créer
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from "@/api/axios"; // Ajustez le chemin si nécessaire
-import TacheDetail from "./TacheDetail.vue"; // Ajustez le chemin si nécessaire
+import api from '@/api/axios';
 
 export default {
-  name: "TacheBoard",
-  components: {
-    TacheDetail,
-  },
   data() {
     return {
-      projetId: null,
-      toutesLesTaches: [],
-      nouvelleTache: "",
-      formVisible: false,
-      formVisibleSection: null,
-      selectedTache: null,
-      sectionClasses: {
-        Backlog: "border-b-2 border-gray-500 bg-gray-200 rounded p-2",
-        "À faire": "border-b-2 border-blue-500 bg-blue-200 rounded p-2",
-        "En cours": "border-b-2 border-yellow-500 bg-yellow-200 rounded p-2",
-        Terminé: "border-b-2 border-green-500 bg-green-200 rounded p-2",
-        Bloqué: "border-b-2 border-red-500 bg-red-200 rounded p-2",
+      tâche: {
+        titre: '',
+        description: '',
+        date_limite: '',
+        statut: 'backlog', // Valeur par défaut
+        priorite: 'moyenne', // Valeur par défaut, changed to 'priorite'
+        projet_id: null,
       },
     };
   },
-  computed: {
-    sectionsTaches() {
-      return {
-        Backlog: this.toutesLesTaches.filter(
-          (tache) => tache.statut === "backlog"
-        ),
-        "À faire": this.toutesLesTaches.filter(
-          (tache) => tache.statut === "a faire"
-        ),
-        "En cours": this.toutesLesTaches.filter(
-          (tache) => tache.statut === "en cours"
-        ),
-        Terminé: this.toutesLesTaches.filter(
-          (tache) => tache.statut === "termine"
-        ),
-        Bloqué: this.toutesLesTaches.filter(
-          (tache) => tache.statut === "bloque"
-        ),
-      };
-    },
-  },
   methods: {
-    async fetchTasks() {
+    async createTache() {
       try {
-        const response = await axios.get(`/projets/${this.projetId}/taches`);
-        this.toutesLesTaches = response.data;
+        console.log("Création de la tâche:", this.tâche); // Vérifie les données
+        await api.post('/taches', this.tâche);
+        this.$emit('created');
+        this.$emit('close');
+        this.tâche = { titre: '', description: '', date_limite: '', statut: 'backlog', priorite: 'moyenne', projet_id: null }; // Réinitialiser le formulaire
       } catch (error) {
-        console.error("Erreur lors de la récupération des tâches:", error);
+        console.error('Erreur lors de la création de la tâche:', error);
+        if (error.response) {
+          console.error('Détails de l\'erreur:', error.response.data); // Affiche les détails de l'erreur
+        }
+        alert('Une erreur est survenue lors de la création de la tâche.'); // Message d'erreur
       }
     },
-
-    openDetail(tache) {
-      this.selectedTache = tache;
-    },
-
-    closeDetail() {
-      this.selectedTache = null;
-    },
-
-    toggleForm(statut) {
-      this.formVisible = true;
-      this.formVisibleSection = statut;
-    },
-
-    async ajouterTache(statut) {
-      if (!this.nouvelleTache) return;
-
-      try {
-        const response = await axios.post(`/projets/${this.projetId}/taches`, {
-          titre: this.nouvelleTache,
-          statut: statut.toLowerCase(),
-          projet_id: this.projetId,
-        });
-
-        const nouvelleTache = {
-          id: response.data.id,
-          titre: this.nouvelleTache,
-          statut: statut.toLowerCase(),
-          date_limite: "",
-          editing: false,
-        };
-
-        this.toutesLesTaches.push(nouvelleTache);
-        this.nouvelleTache = "";
-        this.formVisible = false;
-        this.formVisibleSection = null;
-      } catch (error) {
-        console.error("Erreur lors de l'ajout de la tâche:", error);
-      }
-    },
-  },
-  mounted() {
-    this.projetId = this.$route.params.projectId; // Récupération de l'ID du projet
-    this.fetchTasks(); // Appel pour récupérer les tâches
   },
 };
 </script>
+
+<style scoped>
+/* Styles personnalisés pour un formulaire avec couleur de fond constante */
+input,
+select,
+textarea {
+  background-color: #f4f4f5; /* Couleur de fond des champs */
+  border: none; /* Enlever les bordures */
+  border-radius: 0.375rem; /* Rayon des coins */
+  padding: 0.5rem; /* Espacement interne */
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  background-color: #f4f4f5; /* Garder la même couleur au focus */
+  outline: none; /* Enlever le contour au focus */
+}
+
+button {
+  transition: background-color 0.3s ease;
+}
+</style>

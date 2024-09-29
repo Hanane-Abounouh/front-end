@@ -58,10 +58,9 @@
             alt="User Avatar"
             class="object-cover w-8 h-8 rounded-full"
           />
-          <span class="hidden md:inline-block ml-2 text-gray-700">{{ user.name }}</span>
+         
         </button>
         <div v-if="isProfileMenuOpen" class="absolute right-0 w-56 p-2 mt-2 space-y-2 bg-white border border-gray-100 rounded-md shadow-md">
-          
           <a class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100" href="#">
             Profile
           </a>
@@ -75,7 +74,7 @@
 </template>
 
 <script>
-import axios from '@/api/axios'; 
+import axios from '@/api/axios';
 
 export default {
   name: 'HeaderApp',
@@ -94,12 +93,12 @@ export default {
     async fetchUser() {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.get('/users', {
+        const response = await axios.get('/user', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
-        this.user = response.data;
+        this.user = response.data; // Assurez-vous que la réponse contient le nom et l'avatar
       } catch (error) {
         console.error('Erreur lors de la récupération des informations utilisateur:', error);
       }
@@ -140,7 +139,7 @@ export default {
     }
   },
   created() {
-    this.fetchUser();
+    this.fetchUser(); // Récupère les informations de l'utilisateur à la création du composant
   }
 };
 </script>
