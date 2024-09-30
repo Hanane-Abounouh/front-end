@@ -1,11 +1,13 @@
 <template>
   <div class="flex flex-col h-screen">
-    <Header  @toggleSidebar="toggleSidebar" />
+
+    <Header @toggleSidebar="toggleSidebar" />
+
     <div class="flex flex-1 flex-col">
-      <Aside :class="{ 'block': isSidebarOpen, 'hidden': !isSidebarOpen }" />
-      
+  
+      <Aside :isSidebarOpen="isSidebarOpen" @toggle-sidebar="toggleSidebar" />
       <!-- Barre de navigation -->
-      <nav class="h-14 fixed z-20 w-full  md:ml-80 mt-16 border-t border-gray-100 bg-gray-100 flex items-center gap-10 px-10 py-10  md:px-12 shadow-sm">
+      <nav class="h-14 fixed z-20 w-full  lg:ml-80 mt-16 border-t border-gray-100 bg-gray-100 flex items-center gap-10 px-10 py-10  md:px-12 shadow-sm">
         
         <!-- Menu déroulant pour les projets -->
         <!-- <select 
@@ -26,7 +28,7 @@
         </router-link>
       </nav>
       
-      <main class="flex-1  md:ml-80 mt-36 bg-white border border-gray-200 py-6 px-4 md:px-8">
+      <main class="flex-1  lg:ml-80 mt-36 bg-white border border-gray-200 py-6 px-4 md:px-8">
         <router-view />
       </main>
     </div>
@@ -50,8 +52,8 @@ export default {
     };
   },
   methods: {
-    toggleSidebar() {
-      this.isSidebarOpen = !this.isSidebarOpen;
+     toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen; 
     },
     
     // Fonction pour récupérer les projets de l'utilisateur connecté

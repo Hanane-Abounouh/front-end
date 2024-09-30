@@ -1,7 +1,8 @@
 <template>
-  <aside :class="{'block': isSidebarOpen, 'hidden': !isSidebarOpen, 'md:block': true}" class="fixed z-50 w-80 h-full bg-[#2a2185] shadow-lg border border-gray-50">
-    <button @click="toggleSidebar" class="absolute top-4 right-4 md:hidden p-2 text-white">
-      <i class="fas fa-times"></i>
+   <aside :class="{'block': isSidebarOpen, 'hidden': !isSidebarOpen, 'lg:block': true}" class="fixed z-50  w-80 h-full bg-[#2a2185] shadow-lg border border-gray-50">
+    <!-- Bouton de fermeture (visible uniquement en mobile) -->
+    <button @click="toggleSidebar" class="absolute top-4 right-4 lg:hidden p-2 text-white">
+      <i class="fas fa-times"></i> <!-- Icône pour fermer la sidebar -->
     </button>
     <h1 class="px-6 py-8 text-2xl font-bold text-white text-center border-b border-[#4f47a6] mb-6">Gestion de Projet</h1>
     
@@ -85,14 +86,17 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from '@/api/axios';
 
 export default {
   name: 'AsideApp',
+   props: {
+    isSidebarOpen: Boolean, 
+  },
   data() {
     return {
       isAdmin: false,
-      isSidebarOpen: false
+   
     };
   },
   created() {
@@ -101,15 +105,15 @@ export default {
   methods: {
     async checkIfAdmin() {
       try {
-        const response = await axios.get('/api/users');
+        const response = await axios.get('/users');
         this.isAdmin = response.data.role.id === 1; // Vérifie si l'utilisateur est un admin
       } catch (error) {
         console.error('Erreur lors de la vérification du rôle:', error);
       }
     },
     toggleSidebar() {
-      this.isSidebarOpen = !this.isSidebarOpen;
-    }
+      this.$emit('toggle-sidebar'); 
+    },
   }
 };
 </script>

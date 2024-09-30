@@ -1,14 +1,14 @@
 <template>
-  <header class="fixed md:pl-80 md:px-12 w-full flex justify-between items-center shadow-md h-16 bg-white text-gray-800 z-40 py-4 px-6">
-    <!-- Sidebar Toggle Button -->
-    <button @click="toggleSidebar" class="md:hidden p-2 text-gray-600">
+  <header class="fixed lg:pl-80 md:px-12 w-full flex justify-between items-center shadow-md h-16 bg-white text-gray-800 z-40 py-4 px-6">
+    <!-- Button to open sidebar in mobile mode -->
+    <button @click="toggleSidebar" class="lg:hidden p-2 text-gray-600">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
       </svg>
     </button>
 
     <!-- Search Input -->
-    <div class="flex-1 md:pl-12 flex justify-center md:justify-start">
+    <div class="flex-1 md:pl-12 flex justify-center md:justify-start relative">
       <div class="bg-white rounded flex items-center w-full max-w-md p-2 shadow-md border border-gray-200">
         <button class="outline-none focus:outline-none">
           <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,7 +20,23 @@
           v-model="searchQuery"
           placeholder="Search"
           class="w-full pl-3 text-sm text-gray-900 outline-none bg-transparent focus:outline-none"
+          @input="filterProjects"
         />
+
+        <!-- Project Suggestions -->
+       <!-- Suggestions de projets -->
+       <div v-if="filteredProjects.length" class="absolute items-center w-full max-w-md bg-white border mt-28 border-gray-300 rounded-md shadow-lg">
+      <ul>
+       <li v-for="project in filteredProjects" :key="project.id">
+      <a
+        @click.prevent="goToTaskBoard(project.id)"  
+        class="block px-4 py-2 w-full text-sm text-gray-600 hover:bg-gray-100 cursor-pointer">
+        {{ project.name }}
+         </a>
+       </li>
+     </ul>
+    </div>
+
       </div>
     </div>
 
@@ -58,7 +74,6 @@
             alt="User Avatar"
             class="object-cover w-8 h-8 rounded-full"
           />
-         
         </button>
         <div v-if="isProfileMenuOpen" class="absolute right-0 w-56 p-2 mt-2 space-y-2 bg-white border border-gray-100 rounded-md shadow-md">
           <a class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100" href="#">
@@ -73,6 +88,7 @@
   </header>
 </template>
 
+
 <script>
 import axios from '@/api/axios';
 
@@ -86,7 +102,9 @@ export default {
       user: {
         name: '',
         avatar: ''
-      }
+      },
+      allProjects: [], // All projects will be stored here
+      filteredProjects: [] // Filtered projects based on search
     };
   },
   methods: {
@@ -98,11 +116,42 @@ export default {
             'Authorization': `Bearer ${token}`,
           },
         });
-        this.user = response.data; // Assurez-vous que la réponse contient le nom et l'avatar
+        this.user = response.data; // Ensure response contains name and avatar
       } catch (error) {
-        console.error('Erreur lors de la récupération des informations utilisateur:', error);
+        console.error('Error fetching user information:', error);
       }
     },
+
+    async fetchProjects() {
+      try {
+        const response = await axios.get('/user/projets'); // Fetch all projects
+        this.allProjects = response.data; // Store all projects
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    },
+
+    filterProjects() {
+      // Apply the search filter
+      if (this.searchQuery) {
+        this.filteredProjects = this.allProjects.filter(project =>
+          project.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      } else {
+        this.filteredProjects = []; // Reset if the search is empty
+      }
+    },
+
+ goToTaskBoard(projectId) {
+  if (projectId) {
+    this.$router.push({ name: 'TacheBoard', params: { projectId } }).then(() => {
+      window.location.reload();
+    });
+    this.searchQuery = ''; // Réinitialiser la requête de recherche après la redirection
+    this.filteredProjects = []; // Réinitialiser les projets filtrés
+  }
+},
+
 
     async confirmLogout() {
       const confirmLogout = confirm("Êtes-vous sûr de vouloir vous déconnecter ?");
@@ -122,7 +171,7 @@ export default {
         localStorage.removeItem('token');
         this.$router.push('/login');
       } catch (error) {
-        console.error('Erreur lors de la déconnexion:', error);
+        console.error('Error logging out:', error);
       }
     },
 
@@ -135,11 +184,16 @@ export default {
       this.isNotificationsMenuOpen = false;
     },
     toggleSidebar() {
-      this.$emit('toggle-sidebar');
+      this.$emit('toggle-sidebar'); 
     }
   },
   created() {
-    this.fetchUser(); // Récupère les informations de l'utilisateur à la création du composant
+    this.fetchUser(); // Fetch user info on component creation
+    this.fetchProjects(); // Fetch all projects
   }
 };
 </script>
+
+<style scoped>
+/* Add any additional styles here */
+</style>

@@ -4,11 +4,11 @@
       Tableau des Tâches
     </h1>
 
-    <div class="flex space-x-4">
+    <div class="flex space-x-4 overflow-auto ">
       <div
         v-for="(tâches, statut) in sectionsTâches"
         :key="statut"
-        class="w-1/5 flex flex-col rounded-lg shadow-lg border border-gray-200 p-2 max-h-[70vh]"
+        class="w-[400px] flex flex-col bg-gray-100 rounded-xl shadow-xl border border-gray-200 px-2 py-3 max-h-[70vh]"
       >
         <h2
           :class="sectionClasses[statut]"
@@ -31,7 +31,7 @@
       <div class="w-52 ">
          <p
         @click="openDetail(tâche)"
-        class="text-[14px]  font-semibold text-gray-800 cursor-pointer hover:text-blue-600"
+        class="text-[14px]  font-semibold text-gray-600 cursor-pointer hover:text-blue-600"
         style="white-space: normal; overflow-wrap: break-word;">
         {{ tâche.titre }}
       </p>
@@ -47,7 +47,7 @@
         class="fas fa-pencil-alt text-gray-400 cursor-pointer hover:text-gray-600 hidden group-hover:block"></i>
       <i v-if="tâche.cree_par === currentUserId"
       @click.stop="deleteTâche(tâche.id)"
-      class="fas fa-trash-alt text-red-500 cursor-pointer hover:text-red-700 ml-2 hidden group-hover:block"
+      class="fas fa-trash-alt text-red-400 cursor-pointer hover:text-red-500 ml-2 hidden group-hover:block"
       title="Supprimer la tâche"></i>
 
 
@@ -84,10 +84,10 @@
         <div
           v-if="!formVisible || formVisibleSection !== statut"
           @click="toggleForm(statut)"
-          class="mt-4 flex items-center cursor-pointer hover:text-gray-600 transition"
+          class="mt-4 flex items-center cursor-pointer hover:text-gray-700 transition"
         >
-          <i class="fas fa-plus-circle text-gray-500 text-xl mr-2"></i>
-          <span class="text-gray-500 font-semibold">Ajouter une tâche</span>
+          <i class="fas fa-plus-circle text-gray-600 text-xl mr-2"></i>
+          <span class="text-gray-600 font-semibold">Ajouter une tâche</span>
         </div>
 
         <form
@@ -156,11 +156,11 @@ export default {
       confirmDeleteId: null,
       selectedTâche: null,
       sectionClasses: {
-        backlog: "border-b-2 border-gray-500 bg-gray-200 rounded p-2",
-        "a faire": "border-b-2 border-blue-500 bg-blue-200 rounded p-2",
-        "en cours": "border-b-2 border-yellow-500 bg-yellow-200 rounded p-2",
-        termine: "border-b-2 border-green-500 bg-green-200 rounded p-2",
-        bloque: "border-b-2 border-red-500 bg-red-200 rounded p-2",
+        backlog: "border-b-2 border-gray-500 bg-gray-200 rounded p-2 w-[268px]",
+        "a faire": "border-b-2 border-blue-500 bg-blue-200 rounded p-2 w-[268px]",
+        "en cours": "border-b-2 border-yellow-500 bg-yellow-200 rounded p-2 w-[268px]",
+        termine: "border-b-2 border-green-500 bg-green-200 rounded p-2 w-[268px]",
+        bloque: "border-b-2 border-red-500 bg-red-200 rounded p-2 w-[268px]",
       },
     };
   },
@@ -253,29 +253,33 @@ export default {
       tâche.editedTitre = tâche.titre;
     },
 
-    async saveTâche(tâche) {
-      try {
-        const payload = {
-          titre: tâche.editedTitre,
-          statut: tâche.statut,
-          projet_id: this.projetId,
-        };
+  async saveTâche(tâche) {
+  try {
+    const payload = {
+      titre: tâche.editedTitre,
+      statut: tâche.statut,
+      projet_id: this.projetId,
+    };
 
-        const response = await axios.put(`/taches/${tâche.id}`, payload);
+    const response = await axios.put(`/taches/${tâche.id}`, payload);
 
-        if (response.status === 200) {
-          tâche.titre = tâche.editedTitre;
-          tâche.editing = false;
-        } else {
-          console.error("Erreur lors de la mise à jour:", response.data);
-        }
-      } catch (error) {
-        console.error(
-          "Erreur lors de la mise à jour de la tâche:",
-          error.response ? error.response.data : error.message
-        );
-      }
-    },
+    if (response.status === 200) {
+      tâche.titre = tâche.editedTitre;
+      tâche.editing = false;
+
+      // Success alert
+      alert("Tâche mise à jour avec succès !");
+    } else {
+      console.error("Erreur lors de la mise à jour:", response.data);
+    }
+  } catch (error) {
+    console.error(
+      "Erreur lors de la mise à jour de la tâche:",
+      error.response ? error.response.data : error.message
+    );
+  }
+},
+
     async deleteTâche(tâcheId) {
     this.confirmDeleteId = tâcheId; // Mettez à jour cette ligne
   },
@@ -306,6 +310,10 @@ export default {
     this.fetchTasks();
     this.fetchCurrentUserId(); 
   },
+  created() {
+  this.projetId = this.$route.params.projectId; // Récupérer l'ID du projet à partir des paramètres de la route
+  this.fetchTasks(); 
+},
 };
 </script>
 
@@ -315,7 +323,7 @@ export default {
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 2.5px;
 }
 
 ::-webkit-scrollbar-thumb {
