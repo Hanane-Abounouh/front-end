@@ -49,7 +49,7 @@
 
         <div class="flex w-full items-center justify-between">
           <button class="shrink-0 inline-block w-36 rounded-lg bg-[#2a2185] py-3 font-bold text-white">Connexion</button>
-          <a class="text-sm font-medium text-gray-600 hover:underline" href="#">Mot de passe oublié ?</a>
+        
         </div>
       </form>
 

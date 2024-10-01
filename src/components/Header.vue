@@ -76,9 +76,9 @@
           />
         </button>
         <div v-if="isProfileMenuOpen" class="absolute right-0 w-56 p-2 mt-2 space-y-2 bg-white border border-gray-100 rounded-md shadow-md">
-          <a class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100" href="#">
+          <router-link to="ProfileUser" class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100" href="#">
             Profile
-          </a>
+          </router-link>
           <button @click="confirmLogout" class="block px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 w-full text-left">
             Logout
           </button>
@@ -87,7 +87,6 @@
     </ul>
   </header>
 </template>
-
 
 <script>
 import axios from '@/api/axios';
@@ -104,7 +103,8 @@ export default {
         avatar: ''
       },
       allProjects: [], // All projects will be stored here
-      filteredProjects: [] // Filtered projects based on search
+      filteredProjects: [], // Filtered projects based on search
+      notifications: [] // Tableau pour stocker les notifications
     };
   },
   methods: {
@@ -116,7 +116,7 @@ export default {
             'Authorization': `Bearer ${token}`,
           },
         });
-        this.user = response.data; // Ensure response contains name and avatar
+        this.user = response.data; // Assurez-vous que la réponse contient le nom et l'avatar
       } catch (error) {
         console.error('Error fetching user information:', error);
       }
@@ -131,6 +131,20 @@ export default {
       }
     },
 
+    async fetchNotifications() {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await axios.get('/api/notifications', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        this.notifications = response.data; // Stocker les notifications dans le tableau
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    },
+
     filterProjects() {
       // Apply the search filter
       if (this.searchQuery) {
@@ -142,16 +156,14 @@ export default {
       }
     },
 
- goToTaskBoard(projectId) {
-  if (projectId) {
-    this.$router.push({ name: 'TacheBoard', params: { projectId } }).then(() => {
-      window.location.reload();
-    });
-    this.searchQuery = ''; // Réinitialiser la requête de recherche après la redirection
-    this.filteredProjects = []; // Réinitialiser les projets filtrés
-  }
-},
-
+    goToTaskBoard(projectId) {
+      if (projectId) {
+        this.$router.push({ name: 'TacheBoard', params: { projectId } }).then(() => {
+          this.searchQuery = ''; // Réinitialiser la requête de recherche après la redirection
+          this.filteredProjects = []; // Réinitialiser les projets filtrés
+        });
+      }
+    },
 
     async confirmLogout() {
       const confirmLogout = confirm("Êtes-vous sûr de vouloir vous déconnecter ?");
@@ -178,6 +190,9 @@ export default {
     toggleNotificationsMenu() {
       this.isNotificationsMenuOpen = !this.isNotificationsMenuOpen;
       this.isProfileMenuOpen = false;
+      if (this.isNotificationsMenuOpen) {
+        this.fetchNotifications(); // Récupérer les notifications lorsque le menu est ouvert
+      }
     },
     toggleProfileMenu() {
       this.isProfileMenuOpen = !this.isProfileMenuOpen;
@@ -193,7 +208,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* Add any additional styles here */
-</style>

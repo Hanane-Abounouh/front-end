@@ -16,6 +16,12 @@ import TacheList from '../views/Dashboards/taches/TacheList.vue';
 import TacheBoard from '../views/Dashboards/taches/TacheBoard.vue';
 import TacheDetail from '../views/Dashboards/taches/TacheDetail.vue';
 import CommentaireList from '../views/Dashboards/Commentaires/CommentaireList.vue';
+import ProfileUser from '../views/Dashboards/Users/Profile.vue';
+
+
+
+
+
 
 const routes = [
   {
@@ -46,6 +52,10 @@ const routes = [
         path: '/taches/:tacheId',name: 'TacheDetail', component: TacheDetail,
       },
       { path: 'Commentaires', name: 'CommentaireList', component: CommentaireList },
+      { path: 'ProfileUser', name: 'ProfileUser', component: ProfileUser },
+    
+
+
 
 
 

@@ -1,10 +1,13 @@
 <template>
   <div class="container px-4">
-    <h1 class="text-2xl md:text-3xl font-bold text-gray-700 mb-6">
+   <div class="flex flex-col md:flex-row justify-between gap-4 items-center mb-4  ">
+     <h1 class="text-2xl md:text-3xl font-bold text-gray-700 mb-6">
       Tableau des Tâches
     </h1>
+    <button class="mt-4 md:mt-0 px-2 py-1 md:py-2 text-gray-700 border border-gray-50 rounded bg-[#dbdbf1] flex items-center space-x-2" @click="showShare = true">Partager </button>
+   </div>
 
-    <div class="flex space-x-4 overflow-auto ">
+    <div class="flex space-x-4  ">
       <div
         v-for="(tâches, statut) in sectionsTâches"
         :key="statut"
@@ -133,17 +136,21 @@
 
 
     <TacheDetail v-if="selectedTâche" :tâche="selectedTâche" :projetId="projetId" @close="closeDetail" @tâcheUpdated="fetchTasks" />
+        <PartagerProjete v-if="showShare" @close="closeShareModal" />
   </div>
 </template>
 
 <script>
 import axios from "@/api/axios";
 import TacheDetail from "./TacheDetail.vue";
+import PartagerProjete from "@/views/Dashboards/Projets/PartagerProjete.vue";
+
 
 export default {
   name: "TacheBoard",
   components: {
     TacheDetail,
+    PartagerProjete
   },
   data() {
     return {
@@ -155,6 +162,7 @@ export default {
        currentUserId: null,
       confirmDeleteId: null,
       selectedTâche: null,
+        showShare: false,
       sectionClasses: {
         backlog: "border-b-2 border-gray-500 bg-gray-200 rounded p-2 w-[268px]",
         "a faire": "border-b-2 border-blue-500 bg-blue-200 rounded p-2 w-[268px]",
@@ -217,6 +225,15 @@ export default {
     toggleForm(statut) {
       this.formVisible = true;
       this.formVisibleSection = statut;
+    },
+    
+  toggleShare() {
+    console.log("Toggle Share button clicked");
+    this.showShare = !this.showShare;
+ 
+  },
+   closeShareModal() {
+      this.showShare = false; // Ferme le modal
     },
 
     async ajouterTâche(statut) {
@@ -310,10 +327,19 @@ export default {
     this.fetchTasks();
     this.fetchCurrentUserId(); 
   },
-  created() {
-  this.projetId = this.$route.params.projectId; // Récupérer l'ID du projet à partir des paramètres de la route
-  this.fetchTasks(); 
-},
+
+
+
+
+ watch: {
+    '$route.params.projectId': {
+      immediate: true,
+      handler(newProjectId) {
+        this.projetId = newProjectId;
+        this.fetchTasks(); // Fetch tasks whenever the projectId changes
+      },
+    }}
+
 };
 </script>
 
